@@ -7,6 +7,7 @@ const userRouter=require('./routes/userRouter')
 connectToMongo(mongoURI).then(()=>{
     console.log("Mongodb connected successfully.")
 })
+app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({extended:true}))
 app.use('/users',userRouter)
