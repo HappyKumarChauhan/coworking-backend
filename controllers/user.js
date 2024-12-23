@@ -1,11 +1,11 @@
 const User=require('../models/user')
 const handleUserSignup=async (req,res)=>{
     try{
+        const {username,password}=req.body;
         const existingUser = await User.findOne({ username });
         if (existingUser) {
         return res.status(400).json({ message: 'User already exists' });
         }
-        const {username,password}=req.body;
         const newUser=new User({
             username,
             password
