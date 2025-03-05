@@ -1,6 +1,8 @@
 const express = require('express');
 const {
   registerUser,
+  upload,
+  uploadProfilePicture,
   loginUser,
   getUserProfile,
   updateUserProfile,
@@ -15,7 +17,10 @@ const router = express.Router();
 // Register a new user
 router.post('/register', validateUser, registerUser);
 
-// Login a user
+// Upload profile picture (Authenticated users only)
+router.post('/upload-profile', protect, upload.single('profilePicture'), uploadProfilePicture);
+
+// Login a user 
 router.post('/login', validateLogin, loginUser);
 
 // Get user profile (protected route)

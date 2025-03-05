@@ -2,23 +2,20 @@ const mongoose = require('mongoose');
 
 const bookingSchema = new mongoose.Schema({
   user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
-  desk: { type: mongoose.Schema.Types.ObjectId, ref: 'Desk', required: true },
-  startTime: { type: Date, required: true },
-  endTime: { 
+  property: { type: mongoose.Schema.Types.ObjectId, ref: 'Property', required: true },
+  startDate: { type: Date, required: true },
+  endDate: { 
     type: Date, 
-    required: true, 
+    required: true,
     validate: {
       validator: function (value) {
-        return value > this.startTime; // Ensure end time is after start time
+        return value > this.startDate; // End date must be after start date
       },
-      message: 'End time must be after start time.'
+      message: 'End date must be after start date.'
     }
   },
-  status: { 
-    type: String, 
-    enum: ['Active', 'Completed', 'Cancelled'], 
-    default: 'Active' 
-  },
+  rentalType: { type: String, enum: ['Daily', 'Monthly'], required: true },
+  status: { type: String, enum: ['Pending', 'Confirmed', 'Cancelled'], default: 'Pending' },
   createdAt: { type: Date, default: Date.now }
 });
 

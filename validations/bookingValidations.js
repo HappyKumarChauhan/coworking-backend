@@ -1,24 +1,20 @@
 const { body } = require('express-validator');
 
 const validateBooking = [
-  body('user')
-    .notEmpty().withMessage('User ID is required.')
-    .isMongoId().withMessage('Invalid User ID.'),
+  body('property')
+    .notEmpty().withMessage('Property ID is required.')
+    .isMongoId().withMessage('Invalid Property ID.'),
   
-  body('desk')
-    .notEmpty().withMessage('Desk ID is required.')
-    .isMongoId().withMessage('Invalid Desk ID.'),
+  body('startDate')
+    .notEmpty().withMessage('Start date is required.')
+    .isISO8601().withMessage('Invalid start date format.'),
   
-  body('startTime')
-    .notEmpty().withMessage('Start time is required.')
-    .isISO8601().withMessage('Invalid start time format.'),
-  
-  body('endTime')
-    .notEmpty().withMessage('End time is required.')
-    .isISO8601().withMessage('Invalid end time format.')
+  body('endDate')
+    .notEmpty().withMessage('End date is required.')
+    .isISO8601().withMessage('Invalid end date format.')
     .custom((value, { req }) => {
-      if (new Date(value) <= new Date(req.body.startTime)) {
-        throw new Error('End time must be after start time.');
+      if (new Date(value) <= new Date(req.body.startDate)) {
+        throw new Error('End date must be after start date.');
       }
       return true;
     }),

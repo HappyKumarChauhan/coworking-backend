@@ -12,11 +12,18 @@ const validateUser = [
     .matches(/[A-Z]/)
     .withMessage('Password must contain at least one uppercase letter')
     .matches(/\d/)
-    .withMessage('Password must contain at least one number')
+    .withMessage('Password must contain at least one number'),
+];
+
+const validateProfilePicture = [
+  body('profilePicture')
+    .optional()
+    .isString()
+    .withMessage('Profile picture must be a valid file path'),
 ];
 
 const validateLogin = [
   body('email').isEmail().withMessage('Valid email is required'),
   body('password').notEmpty().withMessage('Password is required')
 ];
-module.exports = { validateUser, validateLogin };
+module.exports = { validateUser, validateLogin, validateProfilePicture };

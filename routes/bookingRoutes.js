@@ -2,11 +2,12 @@ const express = require('express');
 const {
   createBooking,
   getAllBookings,
-  getBookingById,
-  cancelBooking
+  getUserBookings,
+  cancelBooking,
+  confirmBooking
 } = require('../controllers/bookingController');
+const { protect, adminOnly,ownerOnly } = require('../middlewares/authMiddleware');
 const { validateBooking } = require('../validations/bookingValidations');
-const {protect, adminOnly}=require('../middlewares/authMiddleware')
 
 const router = express.Router();
 
@@ -16,8 +17,11 @@ router.post('/', protect, validateBooking, createBooking);
 // Get all bookings (Admin only)
 router.get('/', protect, adminOnly, getAllBookings);
 
-// Get a single booking by ID
-router.get('/:id', protect, getBookingById);
+// Get user bookings
+router.get('/my-bookings', protect, getUserBookings);
+
+// Confirm booking
+router.put('/:id/confirm', protect, ownerOnly, confirmBooking);
 
 // Cancel a booking
 router.put('/:id/cancel', protect, cancelBooking);
