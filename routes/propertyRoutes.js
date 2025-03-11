@@ -1,6 +1,7 @@
 const express = require('express')
 const {
   createProperty,
+  getOwnerProperties,
   getAllProperties,
   uploadPropertyImages,
   updateProperty,
@@ -12,7 +13,6 @@ const { validateProperty,validatePropertyUpdate } = require('../validations/prop
 const {
   protect,
   ownerOnly,
-  adminOnly,
 } = require('../middlewares/authMiddleware')
 
 const router = express.Router()
@@ -30,7 +30,10 @@ router.post(
 )
 
 // Get all properties
-router.get('/', getAllProperties)
+router.get('/',protect, getAllProperties)
+
+// Get all properties listed by the owner
+router.get('/my-properties', protect, ownerOnly, getOwnerProperties);
 
 // Get a property by ID
 router.get('/:id', getPropertyById)

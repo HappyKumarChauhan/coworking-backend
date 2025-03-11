@@ -1,6 +1,7 @@
 const express = require('express');
 const {
   createBooking,
+  getBookingById,
   getAllBookings,
   getUserBookings,
   cancelBooking,
@@ -11,14 +12,16 @@ const { validateBooking } = require('../validations/bookingValidations');
 
 const router = express.Router();
 
+router.get('/my-bookings',protect, getUserBookings)
+
 // Create a new booking
 router.post('/', protect, validateBooking, createBooking);
 
+// Get a specific booking by ID
+router.get('/:id', protect, getBookingById);
+
 // Get all bookings (Admin only)
 router.get('/', protect, adminOnly, getAllBookings);
-
-// Get user bookings
-router.get('/my-bookings', protect, getUserBookings);
 
 // Confirm booking
 router.put('/:id/confirm', protect, ownerOnly, confirmBooking);

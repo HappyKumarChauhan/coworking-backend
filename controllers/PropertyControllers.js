@@ -50,7 +50,7 @@ const uploadPropertyImages = async (req, res) => {
     }
 
     // Store image file paths in database
-    const imagePaths = req.files.map(file => `/uploads/properties/${file.filename}`);
+    const imagePaths = req.files.map(file => `/properties/${file.filename}`);
     property.images = property.images.concat(imagePaths);
     await property.save();
 
@@ -84,6 +84,16 @@ const getAllProperties = async (req, res) => {
     res.json(properties);
   } catch (error) {
     res.status(500).json({ message: 'Error fetching properties', error: error.message });
+  }
+};
+
+// Get all properties listed by the logged-in owner
+const getOwnerProperties = async (req, res) => {
+  try {
+    const properties = await Property.find({ owner: req.user.id });
+    res.json(properties);
+  } catch (error) {
+    res.status(500).json({ message: 'Error fetching owner properties', error: error.message });
   }
 };
 
@@ -142,6 +152,7 @@ module.exports = {
   uploadPropertyImages,
   createProperty,
   getAllProperties,
+  getOwnerProperties,
   getPropertyById,
   deleteProperty,
   updateProperty,

@@ -41,6 +41,25 @@ const createBooking = async (req, res) => {
   }
 };
 
+// Get a single booking by ID
+const getBookingById = async (req, res) => {
+  try {
+    const booking = await Booking.findById(req.params.id)
+      .populate('user', 'name email')
+      .populate('property', 'title location images');
+
+    if (!booking) return res.status(404).json({ message: 'Booking not found' });
+
+    // Ensure user is either the owner of the booking or an admin
+    if (req.user.id.toString() !== booking.user._id.toString() && req.user.role !== 'Admin') {
+      return res.status(403).json({ message: 'Unauthorized access' });
+    }
+    res.json(booking);
+  } catch (error) {
+    res.status(500).json({ message: 'Error fetching booking details', error: error.message });
+  }
+};
+
 // Get all bookings (Admin only)
 const getAllBookings = async (req, res) => {
   try {
@@ -58,7 +77,7 @@ const getAllBookings = async (req, res) => {
 const getUserBookings = async (req, res) => {
   try {
     const bookings = await Booking.find({ user: req.user.id })
-      .populate('property', 'title location');
+      .populate('property', 'title location images');
 
     res.json(bookings);
   } catch (error) {
@@ -131,6 +150,7 @@ const getDatesInRange = (startDate, endDate) => {
 };
 module.exports = {
   createBooking,
+  getBookingById,
   getAllBookings,
   getUserBookings,
   confirmBooking,
