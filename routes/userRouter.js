@@ -9,7 +9,7 @@ const {
   deleteUser,
   getAllUsers
 } = require('../controllers/userController');
-const { validateUser, validateLogin } = require('../validations/userValidations');
+const { validateUser, validateLogin,validateProfileUpdate } = require('../validations/userValidations');
 const { protect, adminOnly } = require('../middlewares/authMiddleware');
 
 const router = express.Router();
@@ -27,7 +27,7 @@ router.post('/login', validateLogin, loginUser);
 router.get('/profile', protect, getUserProfile);
 
 // Update user profile (protected route)
-router.put('/profile', protect, validateUser, updateUserProfile);
+router.put('/profile', protect, validateProfileUpdate, updateUserProfile);
 
 // Delete a user (admin-only route)
 router.delete('/:id', protect, adminOnly, deleteUser);

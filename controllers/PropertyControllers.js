@@ -26,7 +26,7 @@ const fileFilter = (req, file, cb) => {
 const upload = multer({
   storage,
   fileFilter,
-  limits: { fileSize: 5 * 1024 * 1024 }, // Limit: 5MB
+  limits: { fileSize: 20 * 1024 * 1024 }, // Limit: 5MB
 });
 
 // Upload images for a property
@@ -82,6 +82,7 @@ const getAllProperties = async (req, res) => {
   try {
     const properties = await Property.find({ status: 'Available' }).populate('owner', 'name email');
     res.json(properties);
+    // res.json([])
   } catch (error) {
     res.status(500).json({ message: 'Error fetching properties', error: error.message });
   }
@@ -92,6 +93,8 @@ const getOwnerProperties = async (req, res) => {
   try {
     const properties = await Property.find({ owner: req.user.id });
     res.json(properties);
+    // res.json([]);
+
   } catch (error) {
     res.status(500).json({ message: 'Error fetching owner properties', error: error.message });
   }
@@ -102,8 +105,17 @@ const getPropertyById = async (req, res) => {
   try {
     const property = await Property.findById(req.params.id).populate('owner', 'name email');
     if (!property) return res.status(404).json({ message: 'Property not found' });
+    let isInWishlist = false;
 
-    res.json(property);
+    // Check if the user is logged in and has the property in their wishlist
+    if (req.user) {
+      const user = await User.findById(req.user.id);
+      if (user) {
+        isInWishlist = user.wishlist.some((id) => id.toString() === req.params.id);
+      }
+    }
+
+    res.json({ ...property.toObject(), isInWishlist });
   } catch (error) {
     res.status(500).json({ message: 'Error fetching property', error: error.message });
   }

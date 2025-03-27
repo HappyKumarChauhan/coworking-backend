@@ -36,7 +36,7 @@ router.get('/',protect, getAllProperties)
 router.get('/my-properties', protect, ownerOnly, getOwnerProperties);
 
 // Get a property by ID
-router.get('/:id', getPropertyById)
+router.get('/:id',protect, getPropertyById)
 
 // Update property details (Only Owner or Admin)
 router.put('/:id', protect, validatePropertyUpdate, updateProperty);

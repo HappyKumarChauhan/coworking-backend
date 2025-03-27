@@ -2,6 +2,9 @@ const express = require('express');
 const {
   createBooking,
   getBookingById,
+  getCancelledBookings,
+  getCompletedBookings,
+  getUpcomingBookings,
   getAllBookings,
   getUserBookings,
   cancelBooking,
@@ -13,6 +16,15 @@ const { validateBooking } = require('../validations/bookingValidations');
 const router = express.Router();
 
 router.get('/my-bookings',protect, getUserBookings)
+
+// Get Cancelled Bookings
+router.get('/cancelled', protect, getCancelledBookings);
+
+// Get Upcoming Bookings
+router.get('/upcoming', protect, getUpcomingBookings);
+
+// Get Completed Bookings
+router.get('/completed', protect, getCompletedBookings);
 
 // Create a new booking
 router.post('/', protect, validateBooking, createBooking);

@@ -14,7 +14,19 @@ const validateUser = [
     .matches(/\d/)
     .withMessage('Password must contain at least one number'),
 ];
-
+const validateProfileUpdate = [
+  body('name').notEmpty().withMessage('Name is required'),
+  body('phoneNumber')
+    .matches(/^\d{10}$/)
+    .withMessage('Phone number must be a valid 10-digit number'),
+  body('dateOfBirth')
+    .isISO8601()
+    .withMessage('Date of Birth must be a valid date (YYYY-MM-DD)'),
+  body('city').notEmpty().withMessage('City is required'),
+  body('pincode')
+    .matches(/^\d{6}$/)
+    .withMessage('Pincode must be a valid 6-digit number'),
+];
 const validateProfilePicture = [
   body('profilePicture')
     .optional()
@@ -26,4 +38,4 @@ const validateLogin = [
   body('email').isEmail().withMessage('Valid email is required'),
   body('password').notEmpty().withMessage('Password is required')
 ];
-module.exports = { validateUser, validateLogin, validateProfilePicture };
+module.exports = { validateUser, validateLogin, validateProfilePicture,validateProfileUpdate };

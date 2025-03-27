@@ -60,6 +60,38 @@ const getBookingById = async (req, res) => {
   }
 };
 
+// Get Cancelled Bookings
+const getCancelledBookings = async (req, res) => {
+  try {
+    const bookings = await Booking.find({ user: req.user.id, status: 'Cancelled' }).populate('property', '_id title location images');
+    res.json(bookings);
+  } catch (error) {
+    res.status(500).json({ message: 'Error fetching cancelled bookings', error: error.message });
+  }
+};
+
+// Get Upcoming Bookings
+const getUpcomingBookings = async (req, res) => {
+  try {
+    const currentDate = new Date();
+    const bookings = await Booking.find({ user: req.user.id, endDate: { $gt: currentDate },status: { $ne: 'Cancelled' } }).populate('property', '_id title location images');
+    res.json(bookings);
+  } catch (error) {
+    res.status(500).json({ message: 'Error fetching upcoming bookings', error: error.message });
+  }
+};
+
+// Get Completed Bookings
+const getCompletedBookings = async (req, res) => {
+  try {
+    const currentDate = new Date();
+    const bookings = await Booking.find({ user: req.user.id, endDate: { $lte: currentDate },status: { $ne: 'Cancelled' } }).populate('property', '_id title location images');
+    res.json(bookings);
+  } catch (error) {
+    res.status(500).json({ message: 'Error fetching completed bookings', error: error.message });
+  }
+};
+
 // Get all bookings (Admin only)
 const getAllBookings = async (req, res) => {
   try {
@@ -78,13 +110,11 @@ const getUserBookings = async (req, res) => {
   try {
     const bookings = await Booking.find({ user: req.user.id })
       .populate('property', 'title location images');
-
     res.json(bookings);
   } catch (error) {
     res.status(500).json({ message: 'Error fetching user bookings', error: error.message });
   }
 };
-
 // Cancel a booking
 const cancelBooking = async (req, res) => {
   try {
@@ -151,6 +181,9 @@ const getDatesInRange = (startDate, endDate) => {
 module.exports = {
   createBooking,
   getBookingById,
+  getCancelledBookings,
+  getUpcomingBookings,
+  getCompletedBookings,
   getAllBookings,
   getUserBookings,
   confirmBooking,

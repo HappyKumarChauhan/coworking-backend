@@ -25,7 +25,7 @@ const registerUser = async (req, res) => {
   if (!errors.isEmpty()) {
     return res.status(400).json({ errors: errors.array() })
   }
-
+  
   const { name, email, phoneNumber, password, role } = req.body
 
   try {
@@ -109,10 +109,7 @@ const loginUser = async (req, res) => {
     // Generate a JWT token
     const token = jwt.sign(
       { id: user._id, role: user.role },
-      process.env.JWT_SECRET,
-      {
-        expiresIn: '7d',
-      },
+      process.env.JWT_SECRET
     )
 
     res.json({ message: 'Login successful', token, user })
@@ -145,12 +142,12 @@ const updateUserProfile = async (req, res) => {
     }
 
     // Update fields
-    user.name = req.body.name || user.name
-    user.phoneNumber = req.body.phoneNumber || user.phoneNumber
-    user.address = req.body.address|| user.address
-    if (req.body.password) {
-      user.password = await bcrypt.hash(req.body.password, 10)
-    }
+    user.name = req.body.name || user.name;
+    user.phoneNumber = req.body.phoneNumber || user.phoneNumber;
+    user.address = req.body.address || user.address;
+    user.city = req.body.city || user.city;
+    user.pincode = req.body.pincode || user.pincode;
+    user.dateOfBirth = req.body.dateOfBirth || user.dateOfBirth;
 
     await user.save()
     res.json({ message: 'User profile updated', user })
