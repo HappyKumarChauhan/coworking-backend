@@ -8,14 +8,18 @@ const {
   getAllBookings,
   getUserBookings,
   cancelBooking,
-  confirmBooking
+  confirmBooking,
+  checkAvailability
 } = require('../controllers/bookingController');
-const { protect, adminOnly,ownerOnly } = require('../middlewares/authMiddleware');
+const { protect, protectAdmin,ownerOnly } = require('../middlewares/authMiddleware');
 const { validateBooking } = require('../validations/bookingValidations');
 
 const router = express.Router();
 
 router.get('/my-bookings',protect, getUserBookings)
+
+// Check property availability before booking
+router.post('/check-availability', protect, checkAvailability)
 
 // Get Cancelled Bookings
 router.get('/cancelled', protect, getCancelledBookings);
@@ -33,7 +37,7 @@ router.post('/', protect, validateBooking, createBooking);
 router.get('/:id', protect, getBookingById);
 
 // Get all bookings (Admin only)
-router.get('/', protect, adminOnly, getAllBookings);
+router.get('/', protect, protectAdmin, getAllBookings);
 
 // Confirm booking
 router.put('/:id/confirm', protect, ownerOnly, confirmBooking);

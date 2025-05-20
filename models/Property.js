@@ -5,6 +5,13 @@ const propertySchema = new mongoose.Schema({
   title: { type: String, required: true },
   description: { type: String, required: true },
   location: { type: String, required: true },
+  coordinates: {
+    type: {
+      lat: { type: Number, required: true },
+      lng: { type: Number, required: true }
+    },
+    required: true
+  },
   price: { type: Number, required: true }, // Base price
   rentalType: { type: String, enum: ['Daily', 'Monthly'], required: true }, // Rental type
   images: [{ type: String }], // Image URLs

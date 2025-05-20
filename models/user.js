@@ -16,7 +16,7 @@ const userSchema = new mongoose.Schema({
   wishlist: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Property' }],
   role: {
     type: String,
-    enum: ['Normal', 'PropertyOwner', 'Admin'],
+    enum: ['Normal', 'PropertyOwner'],
     default: 'Normal',
   },
   properties: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Property' }],

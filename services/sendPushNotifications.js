@@ -15,8 +15,8 @@ const sendPushNotification = async (userId, title, body) => {
       tokens: user.fcmTokens, // Send to multiple devices
     };
 
-    const response = await admin.messaging().sendMulticast(message);
-    console.log("Notification sent:", response);
+    const response = await admin.messaging().sendEachForMulticast(message);
+    console.log("Notification sent");
   } catch (error) {
     console.error("Error sending notification:", error);
   }

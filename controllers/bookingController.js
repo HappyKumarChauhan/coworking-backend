@@ -1,6 +1,8 @@
 const { validationResult } = require('express-validator');
 const Booking = require('../models/Booking');
 const Property = require('../models/Property');
+const sendPushNotification = require('../services/sendPushNotifications')
+
 
 // Create a new booking
 const createBooking = async (req, res) => {
@@ -34,6 +36,12 @@ const createBooking = async (req, res) => {
     // Create booking record
     const booking = new Booking({ user: req.user.id, property, startDate, endDate, rentalType: selectedProperty.rentalType });
     await booking.save();
+    // Send push notification to property owner
+        await sendPushNotification(
+          selectedProperty.owner,
+          "New Booking Request",
+          `A user has requested to book your property '${selectedProperty.title}'`
+        );
 
     res.status(201).json({ message: 'Booking request submitted, awaiting confirmation', booking });
   } catch (error) {
@@ -128,6 +136,14 @@ const cancelBooking = async (req, res) => {
     booking.status = 'Cancelled';
     await booking.save();
 
+    // Fetch property details to get the owner
+    const property = await Property.findById(booking.property);
+    if (!property) return res.status(404).json({ message: "Property not found" });
+    await sendPushNotification(
+      property.owner,
+      "Booking Cancelled",
+      `A booking for your property ${property.title} has been cancelled.`
+    );
     res.json({ message: 'Booking cancelled successfully', booking });
   } catch (error) {
     res.status(500).json({ message: 'Error cancelling booking', error: error.message });
@@ -168,6 +184,26 @@ const confirmBooking = async (req, res) => {
   }
 };
 
+// Check property availability for selected dates
+const checkAvailability = async (req, res) => {
+  const { propertyId, startDate, endDate } = req.body;
+  if (!propertyId || !startDate || !endDate) {
+    return res.status(400).json({ message: "propertyId, startDate, and endDate are required" });
+  }
+
+  try {
+    const property = await Property.findById(propertyId);
+    if (!property) {
+      return res.status(404).json({ message: "Property not found" });
+    }
+
+    const isAvailable = property.isAvailable(new Date(startDate), new Date(endDate));
+    res.json({ available: isAvailable });
+  } catch (error) {
+    res.status(500).json({ message: "Error checking availability", error: error.message });
+  }
+};
+
 // Utility function to get dates in a range
 const getDatesInRange = (startDate, endDate) => {
   const dates = [];
@@ -187,5 +223,6 @@ module.exports = {
   getAllBookings,
   getUserBookings,
   confirmBooking,
-  cancelBooking
+  cancelBooking,
+  checkAvailability
 };
